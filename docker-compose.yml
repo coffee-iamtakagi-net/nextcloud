@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:14
+    container_name: db
+    restart: always
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    env_file:
+      - db.env
+    networks:
+      - internal
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+    networks:
+      - internal
+
+  app:
+    image: nextcloud:25.0.1-apache
+    container_name: app
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./html:/var/www/html
+      - /mnt/storage1:/storage/storage1
+      - /mnt/storage2:/storage/storage2
+      - /mnt/storage1/Nextcloud:/var/www/html/data
+    environment:
+      - POSTGRES_HOST=db
+      - REDIS_HOST=redis
+      - PHP_MEMORY_LIMIT=3G
+      - PHP_UPLOAD_LIMIT=100G
+    env_file:
+      - db.env
+    links:
+      - db
+      - redis
+    depends_on:
+      - db
+      - redis
+    networks:
+      - internal
+      - default
+  
+  cron:
+    image: nextcloud:25.0.1-apache
+    container_name: cron
+    restart: always
+    volumes:
+      - ./html:/var/www/html
+    entrypoint: /cron.sh
+    depends_on:
+      - db
+      - redis
+    networks:
+      - internal
+      - default
+
+networks:
+  internal:
+    internal: true
+  default:
