@@ -20,7 +20,7 @@ services:
       - internal
 
   app:
-    image: nextcloud:25.0.1-apache
+    image: nextcloud:25.0.1
     container_name: app
     restart: always
     ports:
@@ -29,7 +29,6 @@ services:
       - ./html:/var/www/html
       - /mnt/storage1:/storage/storage1
       - /mnt/storage2:/storage/storage2
-      - /mnt/storage1/Nextcloud:/var/www/html/data
     environment:
       - POSTGRES_HOST=db
       - REDIS_HOST=redis
@@ -48,7 +47,7 @@ services:
       - default
   
   cron:
-    image: nextcloud:25.0.1-apache
+    image: nextcloud:25.0.1
     container_name: cron
     restart: always
     volumes:
