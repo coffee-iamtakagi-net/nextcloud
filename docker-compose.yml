@@ -21,7 +21,7 @@ services:
 
   app:
     image: nextcloud:25.0.1
-    container_name: app
+    container_name: nextcloud_app
     restart: always
     ports:
       - 8080:80
@@ -47,7 +47,7 @@ services:
   
   cron:
     image: nextcloud:25.0.1
-    container_name: cron
+    container_name: nextcloud_cron
     restart: always
     volumes:
       - ./html:/var/www/html
